@@ -159,7 +159,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-6 py-12 max-w-5xl">
+      <main className="container mx-auto px-4 lg:px-6 py-8 lg:py-12 max-w-5xl">
         {/* Step 1: Input Section */}
         <MaterialCard className="mb-12" variant="elevated">
           <MaterialCardHeader>
@@ -180,7 +180,7 @@ const Index = () => {
               supportingText="Paste any social media post and we'll analyze it for you"
             />
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
               <PlatformSelector value={platform} onValueChange={setPlatform} />
               <ToneSelector value={tone} onValueChange={setTone} />
             </div>
