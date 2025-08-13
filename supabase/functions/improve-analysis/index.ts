@@ -25,6 +25,7 @@ IMPROVEMENT RULES:
 3. Maintain the same analytical depth and structure
 4. Keep it focused on the original post content
 5. Use the same tone and platform consideration as the original
+6. CRITICAL: Return ONLY the improved analysis content. Do NOT include meta-commentary, explanations about the improvements, or phrases like "By incorporating" or "This analysis provides"
 
 Current Analysis:
 ${currentAnalysis}
@@ -35,7 +36,7 @@ ${improvementInstructions}
 Platform: ${platform}
 Tone: ${tone}
 
-Please provide an improved analysis that addresses the user's specific feedback while maintaining the analytical framework. Keep the same section structure but enhance the content based on the improvement instructions.`;
+Return the improved analysis directly without any explanatory text about the changes made.`;
 
     const userPrompt = `Original Post: ${post}
 
@@ -67,7 +68,15 @@ Please improve the analysis based on the instructions provided, maintaining the 
     }
 
     const data = await response.json();
-    const improvedAnalysis = data.choices[0].message.content;
+    let improvedAnalysis = data.choices[0].message.content;
+    
+    // Filter out AI meta-commentary
+    improvedAnalysis = improvedAnalysis
+      .replace(/^.*?By incorporating.*?\./gm, '')
+      .replace(/^.*?This analysis.*?\./gm, '')
+      .replace(/^.*?The improved.*?\./gm, '')
+      .replace(/^.*?This approach.*?\./gm, '')
+      .trim();
 
     console.log('Analysis improvement completed successfully');
 

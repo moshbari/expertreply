@@ -25,6 +25,7 @@ SUGGESTION RULES:
 3. Be specific to the analysis content provided
 4. Consider the platform (${platform}) and tone (${tone})
 5. Suggest improvements that would make the analysis more valuable
+6. Return ONLY the suggestions, no explanatory text or meta-commentary
 
 Examples of good suggestions:
 - "Add competitor data"
@@ -37,7 +38,7 @@ Examples of good suggestions:
 Current Analysis:
 ${analysis}
 
-Generate exactly 3 short suggestions that would improve this specific analysis.`;
+Generate exactly 3 short suggestions as a simple list. No explanations or meta-text.`;
 
     console.log('Generating analysis improvement suggestions for platform:', platform, 'with tone:', tone);
 

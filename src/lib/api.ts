@@ -1,4 +1,5 @@
 // API utility functions for ChatGPT integration
+import { cleanAnalysisText } from '@/utils/textCleaning';
 
 export interface AnalysisRequest {
   post: string;
@@ -205,7 +206,15 @@ export async function improveAnalysis(request: ImproveAnalysisRequest): Promise<
       throw new Error(errorData.error || 'Failed to improve analysis');
     }
 
-    return await response.json();
+    const data = await response.json();
+    
+    // Clean the response to remove any unwanted meta-commentary
+    const cleanedData = {
+      ...data,
+      analysis: data.analysis ? cleanAnalysisText(data.analysis) : data.analysis
+    };
+
+    return cleanedData;
   } catch (error) {
     console.error('Improve analysis API error:', error);
     throw error;
