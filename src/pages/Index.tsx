@@ -12,7 +12,6 @@ import PlatformSelector from "@/components/PlatformSelector";
 import ToneSelector from "@/components/ToneSelector";
 import AnalysisCard from "@/components/AnalysisCard";
 import CommentCard from "@/components/CommentCard";
-import { ConversationalCommentCard } from "@/components/ConversationalCommentCard";
 import { ConversationalDialog } from "@/components/ConversationalDialog";
 import { analyzePost, generateComment, generateConversationalComment } from "@/lib/api";
 import { Sparkles, Send } from "lucide-react";
@@ -23,10 +22,10 @@ const Index = () => {
   const [tone, setTone] = useState("casual");
   const [analysis, setAnalysis] = useState("");
   const [comment, setComment] = useState("");
-  const [conversationalComment, setConversationalComment] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isWritingComment, setIsWritingComment] = useState(false);
   const [isGeneratingConversational, setIsGeneratingConversational] = useState(false);
+  const [isConversationalVersion, setIsConversationalVersion] = useState(false);
   const [showContactPopup, setShowContactPopup] = useState(false);
   const [showConversationalDialog, setShowConversationalDialog] = useState(false);
   const { toast } = useToast();
@@ -49,6 +48,8 @@ const Index = () => {
     }
 
     setIsAnalyzing(true);
+    setComment(""); // Reset comment when starting new analysis
+    setIsConversationalVersion(false); // Reset conversational state
     try {
       const result = await analyzePost({ post: post.trim(), platform, tone });
       setAnalysis(result.analysis);
@@ -102,10 +103,11 @@ const Index = () => {
         tone,
         customInstructions: customInstructions.trim() || undefined
       });
-      setConversationalComment(result.comment);
+      setComment(result.comment);
+      setIsConversationalVersion(true);
       toast({
-        title: "Story Version Created",
-        description: "Your conversational comment is ready!",
+        title: "Comment Updated",
+        description: "Your comment has been transformed into a story-driven version!",
       });
     } catch (error) {
       toast({
@@ -179,15 +181,10 @@ const Index = () => {
           <div className="mb-12 animate-scale-in">
             <CommentCard 
               comment={comment} 
-              onRequestConversational={handleRequestConversational}
+              onRequestConversational={!isConversationalVersion ? handleRequestConversational : undefined}
+              isConversationalVersion={isConversationalVersion}
+              isGeneratingConversational={isGeneratingConversational}
             />
-          </div>
-        )}
-
-        {/* Step 3 Output: Conversational Comment */}
-        {conversationalComment && (
-          <div className="mb-12 animate-scale-in">
-            <ConversationalCommentCard comment={conversationalComment} />
           </div>
         )}
 

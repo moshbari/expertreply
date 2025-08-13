@@ -7,9 +7,16 @@ import { useToast } from "@/hooks/use-toast";
 interface CommentCardProps {
   comment: string;
   onRequestConversational?: () => void;
+  isConversationalVersion?: boolean;
+  isGeneratingConversational?: boolean;
 }
 
-const CommentCard = ({ comment, onRequestConversational }: CommentCardProps) => {
+const CommentCard = ({ 
+  comment, 
+  onRequestConversational, 
+  isConversationalVersion = false,
+  isGeneratingConversational = false 
+}: CommentCardProps) => {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
@@ -39,7 +46,7 @@ const CommentCard = ({ comment, onRequestConversational }: CommentCardProps) => 
             <div className="p-3 bg-white/10 rounded-2xl">
               <Copy className="h-6 w-6" />
             </div>
-            Your Expert Comment
+            {isConversationalVersion ? "Your Story-Driven Comment" : "Your Expert Comment"}
           </CardTitle>
           <Button
             onClick={handleCopy}
@@ -52,7 +59,15 @@ const CommentCard = ({ comment, onRequestConversational }: CommentCardProps) => 
           </Button>
         </CardHeader>
         <CardContent className="p-8">
-          <div className="bg-white/10 rounded-2xl p-6 backdrop-blur-sm">
+          <div className="bg-white/10 rounded-2xl p-6 backdrop-blur-sm relative">
+            {isGeneratingConversational && (
+              <div className="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                <div className="flex items-center gap-3 text-white">
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <span className="text-sm">Transforming to story-driven version...</span>
+                </div>
+              </div>
+            )}
             <p className="whitespace-pre-wrap text-white leading-relaxed text-lg font-medium">
               {comment}
             </p>
@@ -64,7 +79,7 @@ const CommentCard = ({ comment, onRequestConversational }: CommentCardProps) => 
         </CardContent>
       </Card>
       
-      {onRequestConversational && (
+      {onRequestConversational && !isGeneratingConversational && (
         <Card className="rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-4">
