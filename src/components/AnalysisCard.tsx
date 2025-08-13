@@ -1,15 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain, Target, Heart, Lightbulb, BarChart3, MessageSquare } from "lucide-react";
+import { MaterialTextarea } from "@/components/ui/material-textarea";
+import { Brain, Target, Heart, Lightbulb, BarChart3, MessageSquare, Edit3, Save, X } from "lucide-react";
 import { stripMarkdown, cleanAIText, extractTitle } from "@/utils/textFormatting";
 
 interface AnalysisCardProps {
   analysis: string;
   onWriteComment: () => void;
   isLoading?: boolean;
+  isEditing?: boolean;
+  editedAnalysis?: string;
+  onEditAnalysis?: () => void;
+  onSaveAnalysis?: () => void;
+  onCancelEdit?: () => void;
+  onEditedAnalysisChange?: (value: string) => void;
 }
 
-const AnalysisCard = ({ analysis, onWriteComment, isLoading }: AnalysisCardProps) => {
+const AnalysisCard = ({ 
+  analysis, 
+  onWriteComment, 
+  isLoading, 
+  isEditing = false,
+  editedAnalysis = "",
+  onEditAnalysis,
+  onSaveAnalysis,
+  onCancelEdit,
+  onEditedAnalysisChange
+}: AnalysisCardProps) => {
   const formatAnalysis = (text: string) => {
     // Clean the text first
     const cleanedText = cleanAIText(stripMarkdown(text));
@@ -124,63 +141,108 @@ const AnalysisCard = ({ analysis, onWriteComment, isLoading }: AnalysisCardProps
   return (
     <Card className="rounded-3xl shadow-elevation-2 border-0 bg-gradient-to-br from-surface via-surface-container to-surface-container-high overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-primary/5 via-purple-500/5 to-accent/5 border-b border-outline-variant/50">
-        <CardTitle className="text-2xl font-bold text-on-surface flex items-center gap-3">
-          <div className="p-3 bg-primary/10 rounded-2xl">
-            <Brain className="h-6 w-6 text-primary" />
+        <CardTitle className="text-2xl font-bold text-on-surface flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary/10 rounded-2xl">
+              <Brain className="h-6 w-6 text-primary" />
+            </div>
+            Post Analysis
           </div>
-          Post Analysis
+          {!isEditing && onEditAnalysis && (
+            <Button
+              onClick={onEditAnalysis}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Edit3 className="h-4 w-4" />
+              Edit
+            </Button>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-8 space-y-6">
-        <div className="space-y-6">
-          {formattedSections.map((section, index) => {
-            const Icon = section.icon;
-            return (
-              <div key={index} className="bg-surface-container rounded-2xl p-6 border border-outline-variant/30">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-primary/10 rounded-xl">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg text-on-surface">{section.title}</h3>
-                </div>
-                <div className="space-y-3">
-                  {section.content.map((content, contentIndex) => (
-                    <p key={contentIndex} className="text-on-surface-variant leading-relaxed text-base">
-                      {content}
-                    </p>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="pt-6 border-t border-outline-variant/50">
-          <div className="bg-surface-container-highest rounded-2xl p-6 mb-6">
-            <p className="text-on-surface-variant mb-1 font-medium">
-              Ready to continue?
-            </p>
-            <p className="text-on-surface-variant/80 text-sm">
-              Does this analysis align with your understanding? Any changes before I write the comment?
-            </p>
+        {isEditing ? (
+          <div className="space-y-6">
+            <MaterialTextarea
+              label="Edit Post Analysis"
+              value={editedAnalysis}
+              onChange={(e) => onEditedAnalysisChange?.(e.target.value)}
+              className="min-h-[300px]"
+              supportingText="Edit the analysis to better reflect your understanding of the post"
+              filled
+            />
+            <div className="flex gap-3">
+              <Button
+                onClick={onSaveAnalysis}
+                className="flex-1 gap-2 bg-gradient-to-r from-accent via-amber-500 to-amber-400 hover:from-accent/90 hover:via-amber-500/90 hover:to-amber-400/90 text-black font-semibold"
+              >
+                <Save className="h-4 w-4" />
+                Save Changes
+              </Button>
+              <Button
+                onClick={onCancelEdit}
+                variant="outline"
+                className="flex-1 gap-2"
+              >
+                <X className="h-4 w-4" />
+                Cancel
+              </Button>
+            </div>
           </div>
-          <Button 
-            onClick={onWriteComment} 
-            disabled={isLoading}
-            className="w-full h-14 rounded-2xl bg-gradient-to-r from-accent via-amber-500 to-amber-400 hover:from-accent/90 hover:via-amber-500/90 hover:to-amber-400/90 text-black font-semibold text-lg shadow-elegant hover:shadow-glow transition-all duration-300 hover:scale-[1.02]"
-          >
-            {isLoading ? (
-              <div className="flex items-center gap-3">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-black/30 border-t-black"></div>
-                Writing Comment...
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <MessageSquare className="h-5 w-5" />
-                Write Expert Comment
-              </div>
-            )}
-          </Button>
-        </div>
+        ) : (
+          <div className="space-y-6">
+            {formattedSections.map((section, index) => {
+              const Icon = section.icon;
+              return (
+                <div key={index} className="bg-surface-container rounded-2xl p-6 border border-outline-variant/30">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-primary/10 rounded-xl">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-on-surface">{section.title}</h3>
+                  </div>
+                  <div className="space-y-3">
+                    {section.content.map((content, contentIndex) => (
+                      <p key={contentIndex} className="text-on-surface-variant leading-relaxed text-base">
+                        {content}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {!isEditing && (
+          <div className="pt-6 border-t border-outline-variant/50">
+            <div className="bg-surface-container-highest rounded-2xl p-6 mb-6">
+              <p className="text-on-surface-variant mb-1 font-medium">
+                Ready to continue?
+              </p>
+              <p className="text-on-surface-variant/80 text-sm">
+                Does this analysis align with your understanding? Any changes before I write the comment?
+              </p>
+            </div>
+            <Button 
+              onClick={onWriteComment} 
+              disabled={isLoading}
+              className="w-full h-14 rounded-2xl bg-gradient-to-r from-accent via-amber-500 to-amber-400 hover:from-accent/90 hover:via-amber-500/90 hover:to-amber-400/90 text-black font-semibold text-lg shadow-elegant hover:shadow-glow transition-all duration-300 hover:scale-[1.02]"
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-black/30 border-t-black"></div>
+                  Writing Comment...
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <MessageSquare className="h-5 w-5" />
+                  Write Expert Comment
+                </div>
+              )}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

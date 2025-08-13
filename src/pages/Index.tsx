@@ -28,6 +28,8 @@ const Index = () => {
   const [isConversationalVersion, setIsConversationalVersion] = useState(false);
   const [showContactPopup, setShowContactPopup] = useState(false);
   const [showConversationalDialog, setShowConversationalDialog] = useState(false);
+  const [isEditingAnalysis, setIsEditingAnalysis] = useState(false);
+  const [editedAnalysis, setEditedAnalysis] = useState("");
   const { toast } = useToast();
   const { profile } = useAuth();
 
@@ -120,6 +122,34 @@ const Index = () => {
     }
   };
 
+  const handleEditAnalysis = () => {
+    setEditedAnalysis(analysis);
+    setIsEditingAnalysis(true);
+  };
+
+  const handleSaveAnalysis = () => {
+    if (!editedAnalysis.trim()) {
+      toast({
+        title: "Invalid Analysis",
+        description: "Analysis cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setAnalysis(editedAnalysis);
+    setIsEditingAnalysis(false);
+    toast({
+      title: "Analysis Updated",
+      description: "Your changes have been saved successfully",
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditedAnalysis("");
+    setIsEditingAnalysis(false);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -172,6 +202,12 @@ const Index = () => {
               analysis={analysis}
               onWriteComment={handleWriteComment}
               isLoading={isWritingComment}
+              isEditing={isEditingAnalysis}
+              editedAnalysis={editedAnalysis}
+              onEditAnalysis={handleEditAnalysis}
+              onSaveAnalysis={handleSaveAnalysis}
+              onCancelEdit={handleCancelEdit}
+              onEditedAnalysisChange={setEditedAnalysis}
             />
           </div>
         )}
