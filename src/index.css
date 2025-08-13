@@ -10,46 +10,63 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Elite CommentCraft Design System */
-    --background: 210 20% 98%; /* #F9FAFB - Light gray */
-    --foreground: 217 33% 17%; /* #111827 - Near black */
+    /* Elite CommentCraft Material Design System */
+    --background: 210 20% 98%; /* #F9FAFB */
+    --foreground: 217 33% 17%; /* #111827 */
 
-    --card: 0 0% 100%; /* White cards */
-    --card-foreground: 217 33% 17%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 217 33% 17%;
+    --surface: 0 0% 100%; /* White surfaces */
+    --surface-variant: 210 15% 97%; /* #F8FAFC */
+    --surface-container: 210 20% 94%; /* #F1F5F9 */
+    
+    --on-surface: 217 33% 17%;
+    --on-surface-variant: 215 16% 47%;
 
     --primary: 239 84% 67%; /* #4F46E5 - Indigo */
-    --primary-foreground: 0 0% 100%;
+    --primary-container: 239 84% 95%; /* Light indigo container */
+    --on-primary: 0 0% 100%;
+    --on-primary-container: 239 84% 20%;
 
     --secondary: 210 40% 96%;
     --secondary-foreground: 217 33% 17%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-
     --accent: 43 96% 56%; /* #F59E0B - Amber */
-    --accent-foreground: 217 33% 17%;
+    --accent-container: 43 96% 90%; /* Light amber container */
+    --on-accent: 217 33% 17%;
+    --on-accent-container: 43 96% 20%;
+
+    --outline: 220 13% 91%;
+    --outline-variant: 220 13% 85%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 239 84% 67%;
+    /* Material Design Elevation */
+    --elevation-1: 0 1px 3px 0 hsl(0 0% 0% / 0.12), 0 1px 2px 0 hsl(0 0% 0% / 0.24);
+    --elevation-2: 0 3px 6px 0 hsl(0 0% 0% / 0.16), 0 2px 4px 0 hsl(0 0% 0% / 0.24);
+    --elevation-3: 0 10px 20px 0 hsl(0 0% 0% / 0.19), 0 6px 6px 0 hsl(0 0% 0% / 0.23);
+    --elevation-4: 0 14px 28px 0 hsl(0 0% 0% / 0.25), 0 10px 10px 0 hsl(0 0% 0% / 0.22);
+    --elevation-5: 0 19px 38px 0 hsl(0 0% 0% / 0.30), 0 15px 12px 0 hsl(0 0% 0% / 0.22);
 
-    --radius: 1rem; /* Rounded-2xl by default */
+    /* Material Motion */
+    --motion-standard: cubic-bezier(0.2, 0, 0, 1);
+    --motion-decelerated: cubic-bezier(0, 0, 0, 1);
+    --motion-accelerated: cubic-bezier(0.3, 0, 1, 1);
     
-    /* Custom gradient for Step 2 output */
-    --gradient-primary: linear-gradient(135deg, hsl(239 84% 67%), hsl(217 91% 60%));
-    
-    /* Shadow system */
-    --shadow-elegant: 0 10px 30px -10px hsl(239 84% 67% / 0.1);
-    --shadow-card: 0 10px 25px -5px hsl(0 0% 0% / 0.1), 0 4px 6px -2px hsl(0 0% 0% / 0.05);
-    
-    /* Animation */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Durations */
+    --duration-short1: 50ms;
+    --duration-short2: 100ms;
+    --duration-short3: 150ms;
+    --duration-short4: 200ms;
+    --duration-medium1: 250ms;
+    --duration-medium2: 300ms;
+    --duration-medium3: 350ms;
+    --duration-medium4: 400ms;
+    --duration-long1: 450ms;
+    --duration-long2: 500ms;
+    --duration-long3: 550ms;
+    --duration-long4: 600ms;
+
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
 

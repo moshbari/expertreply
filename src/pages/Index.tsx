@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { MaterialCard, MaterialCardContent, MaterialCardHeader, MaterialCardTitle } from "@/components/ui/material-card";
+import { MaterialTextarea } from "@/components/ui/material-textarea";
+import { MaterialButton } from "@/components/ui/material-button";
+import { MaterialFab } from "@/components/ui/material-fab";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PlatformSelector from "@/components/PlatformSelector";
 import ToneSelector from "@/components/ToneSelector";
 import AnalysisCard from "@/components/AnalysisCard";
 import CommentCard from "@/components/CommentCard";
+import { analyzePost, generateComment } from "@/lib/api";
+import { Sparkles, Send } from "lucide-react";
 
 const Index = () => {
   const [post, setPost] = useState("");
@@ -24,7 +26,7 @@ const Index = () => {
   const handleAnalysis = async () => {
     if (!post.trim()) {
       toast({
-        title: "Error",
+        title: "Missing Content",
         description: "Please paste a social media post first",
         variant: "destructive",
       });
@@ -33,26 +35,16 @@ const Index = () => {
 
     setIsAnalyzing(true);
     try {
-      // TODO: Implement API call to /api/analysis
-      // For now, using mock data
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setAnalysis(`**Main Problem:** The poster is struggling with time management and feeling overwhelmed with their workload.
-
-**Emotional State:** Stressed, anxious, and seeking validation that their struggles are normal.
-
-**Type of Help Needed:** Practical strategies and mindset shift to better manage their time and reduce overwhelm.
-
-**Likely Root Cause:** Poor boundary setting and perfectionist tendencies leading to overcommitment.
-
-**Relevant Facts:** 
-- Studies show that 76% of professionals report feeling overwhelmed at work (Deloitte, 2023)
-- Time-blocking techniques can improve productivity by up to 25% (Harvard Business Review, 2024)
-
-**Suggested Angle:** Share a relatable experience about overcoming similar challenges, then offer 2-3 actionable time management strategies.`);
+      const result = await analyzePost({ post: post.trim(), platform, tone });
+      setAnalysis(result.analysis);
+      toast({
+        title: "Analysis Complete",
+        description: "Post has been analyzed successfully",
+      });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to analyze the post. Please try again.",
+        title: "Analysis Failed",
+        description: error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     } finally {
@@ -63,14 +55,16 @@ const Index = () => {
   const handleWriteComment = async () => {
     setIsWritingComment(true);
     try {
-      // TODO: Implement API call to /api/comment
-      // For now, using mock data
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setComment(`I totally get this feeling! I used to be in the exact same boat - constantly saying yes to everything and then drowning in my own commitments. What really turned things around for me was implementing time-blocking (literally scheduling every task like an appointment) and the "two-minute rule" - if something takes less than two minutes, do it immediately rather than adding it to your ever-growing list. According to recent research, professionals who use structured time management see about 25% improvement in productivity. You're not alone in feeling overwhelmed, and small systems like these can make a huge difference. What's one area where you feel you lose the most time right now?`);
+      const result = await generateComment({ analysis, platform, tone });
+      setComment(result.comment);
+      toast({
+        title: "Comment Generated",
+        description: "Your expert comment is ready!",
+      });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to generate comment. Please try again.",
+        title: "Generation Failed", 
+        description: error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     } finally {
@@ -82,46 +76,48 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
+      <main className="container mx-auto px-6 py-12 max-w-5xl">
         {/* Step 1: Input Section */}
-        <Card className="rounded-2xl shadow-card mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold">Step 1: Analyze the Post</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <Label htmlFor="post" className="text-base font-medium">
-                Paste the original post here
-              </Label>
-              <Textarea
-                id="post"
-                placeholder="Copy and paste the social media post you want to respond to..."
-                value={post}
-                onChange={(e) => setPost(e.target.value)}
-                className="min-h-[200px] rounded-2xl resize-none"
-              />
-            </div>
+        <MaterialCard className="mb-12" variant="elevated">
+          <MaterialCardHeader>
+            <MaterialCardTitle className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-xl">
+                <Sparkles className="h-6 w-6 text-primary" />
+              </div>
+              Create Your Expert Comment
+            </MaterialCardTitle>
+          </MaterialCardHeader>
+          <MaterialCardContent className="space-y-8">
+            <MaterialTextarea
+              label="Paste the original post here"
+              placeholder="Copy and paste the social media post you want to respond to..."
+              value={post}
+              onChange={(e) => setPost(e.target.value)}
+              className="min-h-[160px]"
+              supportingText="Paste any social media post and we'll analyze it for you"
+            />
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid lg:grid-cols-2 gap-8">
               <PlatformSelector value={platform} onValueChange={setPlatform} />
               <ToneSelector value={tone} onValueChange={setTone} />
             </div>
 
-            <Button
+            <MaterialButton
               onClick={handleAnalysis}
-              disabled={isAnalyzing}
-              variant="accent"
-              className="w-full"
+              loading={isAnalyzing}
+              variant="filled"
               size="lg"
+              className="w-full"
             >
-              {isAnalyzing ? "Analyzing..." : "Start Analysis"}
-            </Button>
-          </CardContent>
-        </Card>
+              <Send className="h-5 w-5" />
+              {isAnalyzing ? "Analyzing Post..." : "Start Analysis"}
+            </MaterialButton>
+          </MaterialCardContent>
+        </MaterialCard>
 
         {/* Step 1 Output: Analysis */}
         {analysis && (
-          <div className="mb-8">
+          <div className="mb-12 animate-slide-up">
             <AnalysisCard
               analysis={analysis}
               onWriteComment={handleWriteComment}
@@ -132,9 +128,21 @@ const Index = () => {
 
         {/* Step 2 Output: Comment */}
         {comment && (
-          <div className="mb-8">
+          <div className="mb-12 animate-scale-in">
             <CommentCard comment={comment} />
           </div>
+        )}
+
+        {/* Floating Action Button */}
+        {!analysis && post.trim() && (
+          <MaterialFab
+            onClick={handleAnalysis}
+            loading={isAnalyzing}
+            extended
+            icon={<Sparkles className="h-5 w-5" />}
+          >
+            Analyze
+          </MaterialFab>
         )}
       </main>
 
