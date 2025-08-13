@@ -68,7 +68,7 @@ const Register = () => {
             Create Account
           </h1>
           <p className="text-muted-foreground mt-2">
-            Join Elite CommentCraft and start crafting expert comments
+            Join ExpertReply and start crafting expert comments
           </p>
         </div>
 

@@ -55,7 +55,7 @@ const Login = () => {
             Welcome Back
           </h1>
           <p className="text-muted-foreground mt-2">
-            Sign in to your Elite CommentCraft account
+            Sign in to your ExpertReply account
           </p>
         </div>
 
