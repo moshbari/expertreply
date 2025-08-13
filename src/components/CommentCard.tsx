@@ -79,7 +79,7 @@ const CommentCard = ({
         </CardContent>
       </Card>
       
-      {onRequestConversational && !isGeneratingConversational && (
+      {onRequestConversational && (
         <Card className="rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5">
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-4">

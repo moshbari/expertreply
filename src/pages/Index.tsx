@@ -208,12 +208,15 @@ const Index = () => {
         onClose={() => setShowContactPopup(false)} 
       />
       
-      <ConversationalDialog
-        open={showConversationalDialog}
-        onClose={() => setShowConversationalDialog(false)}
-        onGenerate={handleGenerateConversational}
-        isLoading={isGeneratingConversational}
-      />
+          <ConversationalDialog
+            open={showConversationalDialog}
+            onClose={() => setShowConversationalDialog(false)}
+            onGenerate={handleGenerateConversational}
+            isLoading={isGeneratingConversational}
+            comment={comment}
+            platform={platform}
+            tone={tone}
+          />
     </div>
   );
 };
