@@ -6,7 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Palette, Users, Heart, Brain, BookOpen } from "lucide-react";
+import { Palette, Users, Heart, Brain, BookOpen, Smile } from "lucide-react";
 
 interface ToneSelectorProps {
   value: string;
@@ -16,8 +16,8 @@ interface ToneSelectorProps {
 const tones = [
   { value: "casual", label: "Casual", icon: Users, description: "Relaxed and friendly" },
   { value: "professional", label: "Professional", icon: Brain, description: "Formal and authoritative" },
-  { value: "friendly", label: "Friendly", icon: Heart, description: "Warm and approachable" },
-  { value: "empathetic", label: "Empathetic", icon: Palette, description: "Understanding and supportive" },
+  { value: "friendly", label: "Friendly", icon: Smile, description: "Warm and approachable" },
+  { value: "empathetic", label: "Empathetic", icon: Heart, description: "Understanding and supportive" },
   { value: "storytelling", label: "Storytelling", icon: BookOpen, description: "Narrative and engaging" },
 ];
 
@@ -46,7 +46,7 @@ const ToneSelector = ({ value, onValueChange }: ToneSelectorProps) => {
             )}
           </div>
         </SelectTrigger>
-        <SelectContent className="rounded-2xl shadow-elevation-3">
+        <SelectContent className="rounded-2xl shadow-elevation-3 bg-white dark:bg-gray-800 z-50">
           {tones.map((tone) => {
             const Icon = tone.icon;
             return (
