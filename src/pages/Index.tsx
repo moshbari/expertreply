@@ -13,7 +13,8 @@ import ToneSelector from "@/components/ToneSelector";
 import AnalysisCard from "@/components/AnalysisCard";
 import CommentCard from "@/components/CommentCard";
 import { ConversationalDialog } from "@/components/ConversationalDialog";
-import { analyzePost, generateComment, generateConversationalComment } from "@/lib/api";
+import { AnalysisImprovementDialog } from "@/components/AnalysisImprovementDialog";
+import { analyzePost, generateComment, generateConversationalComment, improveAnalysis } from "@/lib/api";
 import { Sparkles, Send } from "lucide-react";
 
 const Index = () => {
@@ -28,8 +29,8 @@ const Index = () => {
   const [isConversationalVersion, setIsConversationalVersion] = useState(false);
   const [showContactPopup, setShowContactPopup] = useState(false);
   const [showConversationalDialog, setShowConversationalDialog] = useState(false);
-  const [isEditingAnalysis, setIsEditingAnalysis] = useState(false);
-  const [editedAnalysis, setEditedAnalysis] = useState("");
+  const [showAnalysisImprovement, setShowAnalysisImprovement] = useState(false);
+  const [isRegeneratingAnalysis, setIsRegeneratingAnalysis] = useState(false);
   const { toast } = useToast();
   const { profile } = useAuth();
 
@@ -122,32 +123,36 @@ const Index = () => {
     }
   };
 
-  const handleEditAnalysis = () => {
-    setEditedAnalysis(analysis);
-    setIsEditingAnalysis(true);
+  const handleRequestAnalysisImprovement = () => {
+    setShowAnalysisImprovement(true);
   };
 
-  const handleSaveAnalysis = () => {
-    if (!editedAnalysis.trim()) {
+  const handleRegenerateAnalysis = async (customInstructions: string) => {
+    setIsRegeneratingAnalysis(true);
+    try {
+      const result = await improveAnalysis({
+        post,
+        currentAnalysis: analysis,
+        improvementInstructions: customInstructions,
+        platform,
+        tone
+      });
+      setAnalysis(result.analysis);
+      setShowAnalysisImprovement(false);
       toast({
-        title: "Invalid Analysis",
-        description: "Analysis cannot be empty",
+        title: "Analysis improved",
+        description: "Your analysis has been successfully regenerated with improvements.",
+      });
+    } catch (error) {
+      console.error('Failed to improve analysis:', error);
+      toast({
+        title: "Error",
+        description: "Failed to improve analysis. Please try again.",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsRegeneratingAnalysis(false);
     }
-    
-    setAnalysis(editedAnalysis);
-    setIsEditingAnalysis(false);
-    toast({
-      title: "Analysis Updated",
-      description: "Your changes have been saved successfully",
-    });
-  };
-
-  const handleCancelEdit = () => {
-    setEditedAnalysis("");
-    setIsEditingAnalysis(false);
   };
 
   return (
@@ -198,16 +203,11 @@ const Index = () => {
         {/* Step 1 Output: Analysis */}
         {analysis && (
           <div className="mb-12 animate-slide-up">
-            <AnalysisCard
-              analysis={analysis}
+            <AnalysisCard 
+              analysis={analysis} 
               onWriteComment={handleWriteComment}
               isLoading={isWritingComment}
-              isEditing={isEditingAnalysis}
-              editedAnalysis={editedAnalysis}
-              onEditAnalysis={handleEditAnalysis}
-              onSaveAnalysis={handleSaveAnalysis}
-              onCancelEdit={handleCancelEdit}
-              onEditedAnalysisChange={setEditedAnalysis}
+              onEditAnalysis={handleRequestAnalysisImprovement}
             />
           </div>
         )}
@@ -244,15 +244,25 @@ const Index = () => {
         onClose={() => setShowContactPopup(false)} 
       />
       
-          <ConversationalDialog
-            open={showConversationalDialog}
-            onClose={() => setShowConversationalDialog(false)}
-            onGenerate={handleGenerateConversational}
-            isLoading={isGeneratingConversational}
-            comment={comment}
-            platform={platform}
-            tone={tone}
-          />
+      <ConversationalDialog
+        open={showConversationalDialog}
+        onClose={() => setShowConversationalDialog(false)}
+        onGenerate={handleGenerateConversational}
+        isLoading={isGeneratingConversational}
+        comment={comment}
+        platform={platform}
+        tone={tone}
+      />
+      
+      <AnalysisImprovementDialog
+        open={showAnalysisImprovement}
+        onClose={() => setShowAnalysisImprovement(false)}
+        onRegenerate={handleRegenerateAnalysis}
+        isLoading={isRegeneratingAnalysis}
+        analysis={analysis}
+        platform={platform}
+        tone={tone}
+      />
     </div>
   );
 };
