@@ -26,7 +26,8 @@ const ToneSelector = ({ value, onValueChange }: ToneSelectorProps) => {
   
   return (
     <div className="space-y-4">
-      <Label className="text-lg font-semibold text-on-surface">
+      <Label className="text-lg font-semibold text-on-surface flex items-center gap-2">
+        <Brain className="h-5 w-5 text-primary" />
         Select Tone
       </Label>
       <Select value={value} onValueChange={onValueChange}>

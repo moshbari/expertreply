@@ -31,23 +31,34 @@ const CommentCard = ({ comment }: CommentCardProps) => {
   };
 
   return (
-    <Card className="rounded-2xl shadow-card bg-gradient-primary text-white">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl font-bold">Your Comment</CardTitle>
+    <Card className="rounded-3xl shadow-elevation-3 border-0 bg-gradient-to-br from-primary via-purple-600 to-accent text-white overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between p-8 bg-black/10">
+        <CardTitle className="text-2xl font-bold flex items-center gap-3">
+          <div className="p-3 bg-white/10 rounded-2xl">
+            <Copy className="h-6 w-6" />
+          </div>
+          Your Expert Comment
+        </CardTitle>
         <Button
           onClick={handleCopy}
           variant="outline"
-          size="sm"
-          className="border-white/20 bg-white/10 text-white hover:bg-white/20 rounded-xl"
+          size="lg"
+          className="border-white/30 bg-white/10 text-white hover:bg-white/20 rounded-2xl px-6 py-3 font-semibold backdrop-blur-sm transition-all duration-300 hover:scale-105"
         >
-          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-          {copied ? "Copied!" : "Copy"}
+          {copied ? <Check className="h-5 w-5 mr-2" /> : <Copy className="h-5 w-5 mr-2" />}
+          {copied ? "Copied!" : "Copy Comment"}
         </Button>
       </CardHeader>
-      <CardContent>
-        <p className="whitespace-pre-wrap text-white/95 leading-relaxed">
-          {comment}
-        </p>
+      <CardContent className="p-8">
+        <div className="bg-white/10 rounded-2xl p-6 backdrop-blur-sm">
+          <p className="whitespace-pre-wrap text-white leading-relaxed text-lg font-medium">
+            {comment}
+          </p>
+        </div>
+        <div className="mt-6 flex items-center gap-2 text-white/80 text-sm">
+          <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+          <span>Ready to paste on {comment && 'your social media platform'}</span>
+        </div>
       </CardContent>
     </Card>
   );
