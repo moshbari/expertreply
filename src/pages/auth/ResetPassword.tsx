@@ -86,7 +86,6 @@ const ResetPassword = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your new password"
                   required
-                  icon={<Lock className="h-4 w-4" />}
                   supportingText={!isPasswordValid && password ? "Password must be at least 6 characters" : undefined}
                   error={!isPasswordValid && password.length > 0}
                 />
@@ -107,7 +106,6 @@ const ResetPassword = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your new password"
                   required
-                  icon={<Lock className="h-4 w-4" />}
                   supportingText={!doPasswordsMatch && confirmPassword ? "Passwords do not match" : undefined}
                   error={!doPasswordsMatch && confirmPassword.length > 0}
                 />

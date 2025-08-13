@@ -75,7 +75,6 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                icon={<Mail className="h-4 w-4" />}
               />
 
               <div className="relative">
@@ -86,7 +85,6 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
-                  icon={<Lock className="h-4 w-4" />}
                 />
                 <button
                   type="button"

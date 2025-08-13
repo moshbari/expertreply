@@ -102,7 +102,6 @@ const ForgotPassword = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
                 required
-                icon={<Mail className="h-4 w-4" />}
                 supportingText="We'll send you a secure link to reset your password"
               />
 

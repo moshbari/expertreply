@@ -98,7 +98,6 @@ const Register = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                icon={<Mail className="h-4 w-4" />}
               />
 
               <div className="relative">
@@ -109,7 +108,6 @@ const Register = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a password"
                   required
-                  icon={<Lock className="h-4 w-4" />}
                   supportingText={!isPasswordValid && password ? "Password must be at least 6 characters" : undefined}
                   error={!isPasswordValid && password.length > 0}
                 />
@@ -130,7 +128,6 @@ const Register = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your password"
                   required
-                  icon={<Lock className="h-4 w-4" />}
                   supportingText={!doPasswordsMatch && confirmPassword ? "Passwords do not match" : undefined}
                   error={!doPasswordsMatch && confirmPassword.length > 0}
                 />

@@ -60,22 +60,18 @@ const Header = () => {
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-3">
-                <MaterialButton
-                  asChild
-                  variant="outlined"
-                  size="sm"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                <Link
+                  to="/auth/login"
+                  className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors"
                 >
-                  <Link to="/auth/login">Sign In</Link>
-                </MaterialButton>
-                <MaterialButton
-                  asChild
-                  variant="filled"
-                  size="sm"
-                  className="bg-white text-primary hover:bg-white/90"
+                  Sign In
+                </Link>
+                <Link
+                  to="/auth/register"
+                  className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg bg-white text-primary hover:bg-white/90 transition-colors"
                 >
-                  <Link to="/auth/register">Get Started</Link>
-                </MaterialButton>
+                  Get Started
+                </Link>
               </div>
             )}
           </div>
