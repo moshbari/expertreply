@@ -28,7 +28,7 @@ const Footer = () => {
             })}
           </div>
           <p className="text-sm text-muted-foreground text-center">
-            Built with ❤️ using Lovable & ChatGPT API
+            Built With AI. Mosh Bari - Copyright© 2025. All Rights Reserved.
           </p>
         </div>
       </div>
