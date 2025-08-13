@@ -19,25 +19,22 @@ serve(async (req) => {
       throw new Error("OpenAI API key not configured");
     }
 
-    const prompt = `You are my expert research assistant and ghostwriter. Analyze this social media post using the following structured format:
+    const prompt = `You are my expert research assistant and ghostwriter. Analyze the social media post according to these exact requirements:
+
+Provide your analysis in exactly 6 numbered sections. Use PLAIN TEXT only - no markdown, no asterisks, no special formatting:
 
 1. Main Problem: What is the poster asking or struggling with?
-
 2. Emotional State: What is their emotional state or underlying need?
-
 3. Help Needed: What type of help do they need (e.g., mindset, steps, validation)?
-
 4. Root Cause: What is the likely root cause of their issue?
-
-5. Key Insights: Provide 1–2 relevant facts, stats, or insights from credible sources (within the last 2 years).
-
-6. Comment Angle: Suggest an angle for the response (e.g., relatable story, contrarian view, practical steps).
-
-Please format your response with clear numbered sections as shown above. Do not write the final comment yet.
+5. Facts & Insights: Provide 1–2 relevant facts, stats, or insights from credible sources (within the last 2 years).
+6. Comment Angle: Suggest an angle for the comment (e.g., relatable story, contrarian view, practical steps).
 
 Platform: ${platform}
 Tone: ${tone}
-Post: ${post}`;
+Post: ${post}
+
+Important: Use numbered points (1., 2., 3., etc.) with clear, concise analysis. Write in plain text without any markdown formatting, bold text, or special characters.`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",

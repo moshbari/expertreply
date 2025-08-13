@@ -32,12 +32,7 @@ const ToneSelector = ({ value, onValueChange }: ToneSelectorProps) => {
       </Label>
       <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger className="h-16 rounded-3xl border-2 border-outline-variant hover:border-outline bg-surface-container">
-          <div className="flex items-center gap-3 w-full">
-            <SelectValue placeholder="Choose your tone" />
-            {selectedTone && (
-              <p className="text-xs text-on-surface-variant ml-auto">{selectedTone.description}</p>
-            )}
-          </div>
+          <SelectValue placeholder="Choose your tone" />
         </SelectTrigger>
         <SelectContent className="rounded-2xl shadow-elevation-3 bg-white dark:bg-gray-800 z-50">
           {tones.map((tone) => {

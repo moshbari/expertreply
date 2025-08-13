@@ -19,17 +19,21 @@ serve(async (req) => {
       throw new Error("OpenAI API key not configured");
     }
 
-    const prompt = `Using the analysis provided, write a 4–6 sentence comment for the post. Follow these rules:
+    const prompt = `Using the analysis provided, write a 4–6 sentence comment for the post. Follow these strict rules:
 
-- Sound like an experienced friend, not a lecturer.
-- Blend empathy, authority, and relevant facts or insights naturally.
-- Avoid sales hints, calls to action, or self-promotion.
-- Maintain a human, conversational tone.
-- Avoid sounding like AI.
+- Write in natural paragraph form - NO bullet points, NO dashes, NO numbered lists
+- Sound like an experienced friend sharing genuine advice, not a lecturer or AI
+- Blend empathy, authority, and relevant insights naturally into flowing sentences
+- Avoid sales hints, calls to action, or self-promotion
+- Do NOT use phrases like "Here's the thing", "Based on", or other AI-like intros
+- Write conversational, human sentences that flow together smoothly
+- Match the ${tone} tone for ${platform}
 
 Platform: ${platform}
 Tone: ${tone}
-Analysis: ${analysis}`;
+Analysis: ${analysis}
+
+Write your response as a natural, flowing paragraph without any formatting marks, dashes, or bullet points.`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",

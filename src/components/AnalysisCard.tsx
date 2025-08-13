@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Brain, Target, Heart, Lightbulb, BarChart3, MessageSquare } from "lucide-react";
+import { stripMarkdown, cleanAIText, extractTitle } from "@/utils/textFormatting";
 
 interface AnalysisCardProps {
   analysis: string;
@@ -9,9 +10,10 @@ interface AnalysisCardProps {
 }
 
 const AnalysisCard = ({ analysis, onWriteComment, isLoading }: AnalysisCardProps) => {
-  // Enhanced text parsing with better section detection
   const formatAnalysis = (text: string) => {
-    const lines = text.split('\n').filter(line => line.trim());
+    // Clean the text first
+    const cleanedText = cleanAIText(stripMarkdown(text));
+    const lines = cleanedText.split('\n').filter(line => line.trim());
     const sections: { icon: any; title: string; content: string[] }[] = [];
     
     const sectionIcons = {
@@ -50,77 +52,71 @@ const AnalysisCard = ({ analysis, onWriteComment, isLoading }: AnalysisCardProps
         if (isNumbered) {
           if (currentSection) sections.push(currentSection);
           
-          const content = trimmedLine.replace(/^\d+\.\s/, '');
+          const content = stripMarkdown(trimmedLine.replace(/^\d+\.\s/, ''));
           const lowerContent = content.toLowerCase();
           
           // Find appropriate icon based on content
           let icon = Brain;
-          let title = `Point ${sections.length + 1}`;
+          let title = extractTitle(content, 35);
           
           for (const [keyword, iconComponent] of Object.entries(sectionIcons)) {
             if (lowerContent.includes(keyword)) {
               icon = iconComponent;
-              // Extract a meaningful title
-              const words = content.split(' ');
-              title = words.slice(0, 3).join(' ');
-              if (title.length > 30) title = title.substring(0, 30) + '...';
               break;
             }
           }
           
           currentSection = {
             icon,
-            title: title.charAt(0).toUpperCase() + title.slice(1),
+            title,
             content: [content]
           };
         } else if (currentSection && trimmedLine) {
-          currentSection.content.push(trimmedLine);
+          const cleanedLine = stripMarkdown(trimmedLine);
+          if (cleanedLine && !currentSection.content.includes(cleanedLine)) {
+            currentSection.content.push(cleanedLine);
+          }
         }
       });
       
       if (currentSection) sections.push(currentSection);
     } else {
       // Handle paragraph format or fallback
-      const paragraphs = text.split('\n\n').filter(p => p.trim());
+      const paragraphs = cleanedText.split('\n\n').filter(p => p.trim());
       
       if (paragraphs.length > 1) {
         paragraphs.forEach((paragraph, index) => {
-          const trimmedParagraph = paragraph.trim();
-          const lowerParagraph = trimmedParagraph.toLowerCase();
+          const cleanedParagraph = stripMarkdown(paragraph.trim());
+          const lowerParagraph = cleanedParagraph.toLowerCase();
           
           let icon = Brain;
-          let title = `Analysis ${index + 1}`;
+          let title = extractTitle(cleanedParagraph, 40);
           
-          // Smart title detection
+          // Smart icon detection
           for (const [keyword, iconComponent] of Object.entries(sectionIcons)) {
             if (lowerParagraph.includes(keyword)) {
               icon = iconComponent;
-              const sentences = trimmedParagraph.split('.').filter(s => s.trim());
-              if (sentences.length > 0) {
-                title = sentences[0].trim();
-                if (title.length > 40) title = title.substring(0, 40) + '...';
-              }
               break;
             }
           }
           
           sections.push({
             icon,
-            title: title.charAt(0).toUpperCase() + title.slice(1),
-            content: trimmedParagraph.split('\n').filter(line => line.trim())
+            title,
+            content: cleanedParagraph.split('\n').filter(line => line.trim())
           });
         });
       } else {
         // Single block - just display cleanly
         sections.push({
           icon: Brain,
-          title: 'Analysis',
-          content: lines
+          title: 'Analysis Overview',
+          content: lines.map(line => stripMarkdown(line))
         });
       }
     }
     
-    return sections.length > 0 ? sections : [{ icon: Brain, title: 'Analysis', content: lines }];
+    return sections.length > 0 ? sections : [{ icon: Brain, title: 'Analysis', content: [cleanedText] }];
   };
 
   const formattedSections = formatAnalysis(analysis);
