@@ -12,7 +12,9 @@ import PlatformSelector from "@/components/PlatformSelector";
 import ToneSelector from "@/components/ToneSelector";
 import AnalysisCard from "@/components/AnalysisCard";
 import CommentCard from "@/components/CommentCard";
-import { analyzePost, generateComment } from "@/lib/api";
+import { ConversationalCommentCard } from "@/components/ConversationalCommentCard";
+import { ConversationalDialog } from "@/components/ConversationalDialog";
+import { analyzePost, generateComment, generateConversationalComment } from "@/lib/api";
 import { Sparkles, Send } from "lucide-react";
 
 const Index = () => {
@@ -21,9 +23,12 @@ const Index = () => {
   const [tone, setTone] = useState("casual");
   const [analysis, setAnalysis] = useState("");
   const [comment, setComment] = useState("");
+  const [conversationalComment, setConversationalComment] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isWritingComment, setIsWritingComment] = useState(false);
+  const [isGeneratingConversational, setIsGeneratingConversational] = useState(false);
   const [showContactPopup, setShowContactPopup] = useState(false);
+  const [showConversationalDialog, setShowConversationalDialog] = useState(false);
   const { toast } = useToast();
   const { profile } = useAuth();
 
@@ -79,6 +84,37 @@ const Index = () => {
       });
     } finally {
       setIsWritingComment(false);
+    }
+  };
+
+  const handleRequestConversational = () => {
+    setShowConversationalDialog(true);
+  };
+
+  const handleGenerateConversational = async (customInstructions: string) => {
+    setIsGeneratingConversational(true);
+    setShowConversationalDialog(false);
+    
+    try {
+      const result = await generateConversationalComment({
+        originalComment: comment,
+        platform,
+        tone,
+        customInstructions: customInstructions.trim() || undefined
+      });
+      setConversationalComment(result.comment);
+      toast({
+        title: "Story Version Created",
+        description: "Your conversational comment is ready!",
+      });
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: error instanceof Error ? error.message : "Please try again",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingConversational(false);
     }
   };
 
@@ -141,7 +177,17 @@ const Index = () => {
         {/* Step 2 Output: Comment */}
         {comment && (
           <div className="mb-12 animate-scale-in">
-            <CommentCard comment={comment} />
+            <CommentCard 
+              comment={comment} 
+              onRequestConversational={handleRequestConversational}
+            />
+          </div>
+        )}
+
+        {/* Step 3 Output: Conversational Comment */}
+        {conversationalComment && (
+          <div className="mb-12 animate-scale-in">
+            <ConversationalCommentCard comment={conversationalComment} />
           </div>
         )}
 
@@ -163,6 +209,13 @@ const Index = () => {
       <ContactPopup 
         open={showContactPopup} 
         onClose={() => setShowContactPopup(false)} 
+      />
+      
+      <ConversationalDialog
+        open={showConversationalDialog}
+        onClose={() => setShowConversationalDialog(false)}
+        onGenerate={handleGenerateConversational}
+        isLoading={isGeneratingConversational}
       />
     </div>
   );
