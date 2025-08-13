@@ -19,16 +19,21 @@ serve(async (req) => {
       throw new Error("OpenAI API key not configured");
     }
 
-    const prompt = `You are my expert research assistant and ghostwriter. Your job is to craft a concise analysis of the provided social media post according to the following rules:
+    const prompt = `You are my expert research assistant and ghostwriter. Analyze this social media post using the following structured format:
 
-1. What is the poster asking or struggling with?
-2. What is their emotional state or underlying need?
-3. What type of help do they need (e.g., mindset, steps, validation)?
-4. What is the likely root cause of their issue?
-5. Provide 1–2 relevant facts, stats, or insights from credible sources (within the last 2 years).
-6. Suggest an angle for the comment (e.g., relatable story, contrarian view, practical steps).
+1. Main Problem: What is the poster asking or struggling with?
 
-Do not write the final comment yet. Return only the analysis.
+2. Emotional State: What is their emotional state or underlying need?
+
+3. Help Needed: What type of help do they need (e.g., mindset, steps, validation)?
+
+4. Root Cause: What is the likely root cause of their issue?
+
+5. Key Insights: Provide 1–2 relevant facts, stats, or insights from credible sources (within the last 2 years).
+
+6. Comment Angle: Suggest an angle for the response (e.g., relatable story, contrarian view, practical steps).
+
+Please format your response with clear numbered sections as shown above. Do not write the final comment yet.
 
 Platform: ${platform}
 Tone: ${tone}

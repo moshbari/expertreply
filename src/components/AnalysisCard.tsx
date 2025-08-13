@@ -9,49 +9,117 @@ interface AnalysisCardProps {
 }
 
 const AnalysisCard = ({ analysis, onWriteComment, isLoading }: AnalysisCardProps) => {
-  // Parse the analysis text to format it better
+  // Enhanced text parsing with better section detection
   const formatAnalysis = (text: string) => {
     const lines = text.split('\n').filter(line => line.trim());
     const sections: { icon: any; title: string; content: string[] }[] = [];
-    let currentSection: { icon: any; title: string; content: string[] } | null = null;
     
     const sectionIcons = {
-      'main problem': Target,
-      'emotional state': Heart,
-      'help needed': Lightbulb,
-      'root cause': Brain,
-      'facts': BarChart3,
-      'comment angle': MessageSquare,
+      'problem': Target,
+      'struggle': Target,
+      'asking': Target,
+      'emotional': Heart,
+      'state': Heart,
+      'need': Heart,
+      'help': Lightbulb,
+      'type': Lightbulb,
+      'assistance': Lightbulb,
+      'root': Brain,
+      'cause': Brain,
+      'underlying': Brain,
+      'fact': BarChart3,
+      'stat': BarChart3,
+      'insight': BarChart3,
+      'data': BarChart3,
+      'angle': MessageSquare,
+      'approach': MessageSquare,
+      'strategy': MessageSquare,
     };
     
-    lines.forEach(line => {
-      const lowerLine = line.toLowerCase();
-      const sectionKey = Object.keys(sectionIcons).find(key => 
-        lowerLine.includes(key) && (lowerLine.includes(':') || lowerLine.includes('?'))
-      );
-      
-      if (sectionKey) {
-        if (currentSection) sections.push(currentSection);
-        currentSection = {
-          icon: sectionIcons[sectionKey as keyof typeof sectionIcons],
-          title: line.split(':')[0].trim(),
-          content: line.includes(':') ? [line.split(':').slice(1).join(':').trim()] : []
-        };
-      } else if (currentSection) {
-        currentSection.content.push(line.trim());
-      } else {
-        // If no section found yet, create a general section
-        if (!currentSection) {
-          currentSection = {
-            icon: Brain,
-            title: 'Analysis',
-            content: [line.trim()]
-          };
-        }
-      }
-    });
+    // Try to detect numbered sections (1., 2., 3., etc.)
+    const numberedSections = lines.filter(line => /^\d+\.\s/.test(line.trim()));
     
-    if (currentSection) sections.push(currentSection);
+    if (numberedSections.length >= 3) {
+      // Handle numbered format
+      let currentSection: { icon: any; title: string; content: string[] } | null = null;
+      
+      lines.forEach(line => {
+        const trimmedLine = line.trim();
+        const isNumbered = /^\d+\.\s/.test(trimmedLine);
+        
+        if (isNumbered) {
+          if (currentSection) sections.push(currentSection);
+          
+          const content = trimmedLine.replace(/^\d+\.\s/, '');
+          const lowerContent = content.toLowerCase();
+          
+          // Find appropriate icon based on content
+          let icon = Brain;
+          let title = `Point ${sections.length + 1}`;
+          
+          for (const [keyword, iconComponent] of Object.entries(sectionIcons)) {
+            if (lowerContent.includes(keyword)) {
+              icon = iconComponent;
+              // Extract a meaningful title
+              const words = content.split(' ');
+              title = words.slice(0, 3).join(' ');
+              if (title.length > 30) title = title.substring(0, 30) + '...';
+              break;
+            }
+          }
+          
+          currentSection = {
+            icon,
+            title: title.charAt(0).toUpperCase() + title.slice(1),
+            content: [content]
+          };
+        } else if (currentSection && trimmedLine) {
+          currentSection.content.push(trimmedLine);
+        }
+      });
+      
+      if (currentSection) sections.push(currentSection);
+    } else {
+      // Handle paragraph format or fallback
+      const paragraphs = text.split('\n\n').filter(p => p.trim());
+      
+      if (paragraphs.length > 1) {
+        paragraphs.forEach((paragraph, index) => {
+          const trimmedParagraph = paragraph.trim();
+          const lowerParagraph = trimmedParagraph.toLowerCase();
+          
+          let icon = Brain;
+          let title = `Analysis ${index + 1}`;
+          
+          // Smart title detection
+          for (const [keyword, iconComponent] of Object.entries(sectionIcons)) {
+            if (lowerParagraph.includes(keyword)) {
+              icon = iconComponent;
+              const sentences = trimmedParagraph.split('.').filter(s => s.trim());
+              if (sentences.length > 0) {
+                title = sentences[0].trim();
+                if (title.length > 40) title = title.substring(0, 40) + '...';
+              }
+              break;
+            }
+          }
+          
+          sections.push({
+            icon,
+            title: title.charAt(0).toUpperCase() + title.slice(1),
+            content: trimmedParagraph.split('\n').filter(line => line.trim())
+          });
+        });
+      } else {
+        // Single block - just display cleanly
+        sections.push({
+          icon: Brain,
+          title: 'Analysis',
+          content: lines
+        });
+      }
+    }
+    
     return sections.length > 0 ? sections : [{ icon: Brain, title: 'Analysis', content: lines }];
   };
 
@@ -79,9 +147,9 @@ const AnalysisCard = ({ analysis, onWriteComment, isLoading }: AnalysisCardProps
                   </div>
                   <h3 className="font-semibold text-lg text-on-surface">{section.title}</h3>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {section.content.map((content, contentIndex) => (
-                    <p key={contentIndex} className="text-on-surface-variant leading-relaxed">
+                    <p key={contentIndex} className="text-on-surface-variant leading-relaxed text-base">
                       {content}
                     </p>
                   ))}
