@@ -107,10 +107,12 @@ const Index = () => {
               loading={isAnalyzing}
               variant="filled"
               size="lg"
-              className="w-full"
+              className="w-full bg-gradient-to-r from-primary via-purple-600 to-accent hover:from-primary/90 hover:via-purple-600/90 hover:to-accent/90 shadow-2xl shadow-primary/25 transform hover:scale-[1.02] transition-all duration-300"
             >
-              <Send className="h-5 w-5" />
-              {isAnalyzing ? "Analyzing Post..." : "Start Analysis"}
+              <div className="flex items-center gap-3">
+                <Send className="h-5 w-5" />
+                <span>{isAnalyzing ? "Analyzing Post..." : "Start Analysis"}</span>
+              </div>
             </MaterialButton>
           </MaterialCardContent>
         </MaterialCard>

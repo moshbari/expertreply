@@ -20,7 +20,7 @@ export interface CommentResponse {
   comment: string;
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_URL = "https://kjabpmcsiluvtxmbbfbg.supabase.co";
 
 export async function analyzePost(request: AnalysisRequest): Promise<AnalysisResponse> {
   try {

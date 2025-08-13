@@ -17,7 +17,7 @@ const tones = [
   { value: "casual", label: "Casual", icon: Users, description: "Relaxed and friendly" },
   { value: "professional", label: "Professional", icon: Brain, description: "Formal and authoritative" },
   { value: "friendly", label: "Friendly", icon: Heart, description: "Warm and approachable" },
-  { value: "empathetic", label: "Empathetic", icon: Heart, description: "Understanding and supportive" },
+  { value: "empathetic", label: "Empathetic", icon: Palette, description: "Understanding and supportive" },
   { value: "storytelling", label: "Storytelling", icon: BookOpen, description: "Narrative and engaging" },
 ];
 
