@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthProvider";
+import { ContactPopup } from "@/components/auth/ContactPopup";
 import { MaterialCard, MaterialCardContent, MaterialCardHeader, MaterialCardTitle } from "@/components/ui/material-card";
 import { MaterialTextarea } from "@/components/ui/material-textarea";
 import { MaterialButton } from "@/components/ui/material-button";
@@ -21,7 +23,9 @@ const Index = () => {
   const [comment, setComment] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isWritingComment, setIsWritingComment] = useState(false);
+  const [showContactPopup, setShowContactPopup] = useState(false);
   const { toast } = useToast();
+  const { profile } = useAuth();
 
   const handleAnalysis = async () => {
     if (!post.trim()) {
@@ -30,6 +34,12 @@ const Index = () => {
         description: "Please paste a social media post first",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Check if user has access to this feature
+    if (!profile || profile.role === 'interested') {
+      setShowContactPopup(true);
       return;
     }
 
@@ -149,6 +159,11 @@ const Index = () => {
       </main>
 
       <Footer />
+      
+      <ContactPopup 
+        open={showContactPopup} 
+        onClose={() => setShowContactPopup(false)} 
+      />
     </div>
   );
 };
