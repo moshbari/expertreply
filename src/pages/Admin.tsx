@@ -20,7 +20,7 @@ import {
 interface UserProfile {
   id: string;
   email: string;
-  role: 'admin' | 'user' | 'interested';
+  role: 'admin' | 'TRIAL' | 'UNLIMITED' | 'SUSPENDED';
   created_at: string;
 }
 
@@ -63,7 +63,7 @@ const Admin = () => {
     }
   };
 
-  const updateUserRole = async (userId: string, newRole: 'admin' | 'user' | 'interested') => {
+  const updateUserRole = async (userId: string, newRole: 'admin' | 'TRIAL' | 'UNLIMITED' | 'SUSPENDED') => {
     setUpdatingUsers(prev => new Set(prev).add(userId));
     
     try {
@@ -102,8 +102,12 @@ const Admin = () => {
     switch (role) {
       case 'admin':
         return 'destructive';
-      case 'user':
+      case 'UNLIMITED':
         return 'default';
+      case 'TRIAL':
+        return 'secondary';
+      case 'SUSPENDED':
+        return 'outline';
       default:
         return 'secondary';
     }
@@ -113,8 +117,12 @@ const Admin = () => {
     switch (role) {
       case 'admin':
         return <Crown className="h-3 w-3" />;
-      case 'user':
+      case 'UNLIMITED':
         return <User className="h-3 w-3" />;
+      case 'TRIAL':
+        return <Shield className="h-3 w-3" />;
+      case 'SUSPENDED':
+        return <Shield className="h-3 w-3 text-muted-foreground" />;
       default:
         return <Shield className="h-3 w-3" />;
     }
@@ -122,8 +130,9 @@ const Admin = () => {
 
   const roleStats = {
     admin: users.filter(u => u.role === 'admin').length,
-    user: users.filter(u => u.role === 'user').length,
-    interested: users.filter(u => u.role === 'interested').length,
+    unlimited: users.filter(u => u.role === 'UNLIMITED').length,
+    trial: users.filter(u => u.role === 'TRIAL').length,
+    suspended: users.filter(u => u.role === 'SUSPENDED').length,
   };
 
   if (loading) {
@@ -152,7 +161,7 @@ const Admin = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="grid md:grid-cols-4 gap-6 mb-8">
               <MaterialCard variant="elevated">
                 <MaterialCardContent className="p-6">
                   <div className="flex items-center gap-3">
@@ -174,8 +183,8 @@ const Admin = () => {
                       <User className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{roleStats.user}</p>
-                      <p className="text-sm text-muted-foreground">Users</p>
+                      <p className="text-2xl font-bold">{roleStats.unlimited}</p>
+                      <p className="text-sm text-muted-foreground">Unlimited</p>
                     </div>
                   </div>
                 </MaterialCardContent>
@@ -188,8 +197,22 @@ const Admin = () => {
                       <Shield className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">{roleStats.interested}</p>
-                      <p className="text-sm text-muted-foreground">Interested</p>
+                      <p className="text-2xl font-bold">{roleStats.trial}</p>
+                      <p className="text-sm text-muted-foreground">Trial</p>
+                    </div>
+                  </div>
+                </MaterialCardContent>
+              </MaterialCard>
+
+              <MaterialCard variant="elevated">
+                <MaterialCardContent className="p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-destructive/5 rounded-lg">
+                      <Shield className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold">{roleStats.suspended}</p>
+                      <p className="text-sm text-muted-foreground">Suspended</p>
                     </div>
                   </div>
                 </MaterialCardContent>
@@ -255,18 +278,25 @@ const Admin = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                onClick={() => updateUserRole(user.id, 'interested')}
-                                disabled={user.role === 'interested'}
+                                onClick={() => updateUserRole(user.id, 'TRIAL')}
+                                disabled={user.role === 'TRIAL'}
                               >
                                 <Shield className="h-4 w-4 mr-2" />
-                                Interested
+                                Trial
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => updateUserRole(user.id, 'user')}
-                                disabled={user.role === 'user'}
+                                onClick={() => updateUserRole(user.id, 'UNLIMITED')}
+                                disabled={user.role === 'UNLIMITED'}
                               >
                                 <User className="h-4 w-4 mr-2" />
-                                User
+                                Unlimited
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => updateUserRole(user.id, 'SUSPENDED')}
+                                disabled={user.role === 'SUSPENDED'}
+                              >
+                                <Shield className="h-4 w-4 mr-2 text-muted-foreground" />
+                                Suspended
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => updateUserRole(user.id, 'admin')}
